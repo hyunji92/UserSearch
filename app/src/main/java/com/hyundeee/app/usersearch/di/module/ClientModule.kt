@@ -1,4 +1,5 @@
-package com.hyundeee.app.usersearch.di
+
+package com.hyundeee.app.usersearch.di.module
 
 import com.hyundeee.app.usersearch.api.client.UserSearchClient
 import dagger.Module
