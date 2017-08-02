@@ -1,8 +1,7 @@
 package com.hyundeee.app.usersearch.api.client
 
-import com.hyundeee.app.usersearch.api.service.GitHubService
+import com.hyundeee.app.usersearch.api.service.UserSearchService
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -16,7 +15,7 @@ import javax.inject.Singleton
 class UserSearchClient @Inject constructor(provideOkHttpClient: OkHttpClient) {
 
     var baseUrl = "https://api.github.com"
-    val githubService: GitHubService
+    val githubService: UserSearchService
 
     init {
         val retrofit =  Retrofit.Builder()
@@ -26,6 +25,6 @@ class UserSearchClient @Inject constructor(provideOkHttpClient: OkHttpClient) {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
 
-        githubService = retrofit.create(GitHubService::class.java)
+        githubService = retrofit.create(UserSearchService::class.java)
     }
 }

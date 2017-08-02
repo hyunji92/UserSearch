@@ -8,7 +8,7 @@ import retrofit2.http.Query
 /**
  * Created by jeonghyeonji on 2017. 8. 2..
  */
-public interface GitHubService {
+public interface UserSearchService {
 
     @GET("/search/users")
     fun getUserList(
