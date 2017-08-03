@@ -1,8 +1,11 @@
 package com.hyundeee.app.usersearch.view.main.presenter
 
+import android.support.design.widget.BottomNavigationView
+import com.hyundeee.app.usersearch.R
 import com.hyundeee.app.usersearch.api.client.UserSearchClient
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
 /**

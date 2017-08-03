@@ -9,7 +9,6 @@ import com.hyundeee.app.usersearch.dto.User
 interface MainPresenter {
     fun getUserList(q: String)
 
-
     interface View {
         fun onRefreshListView()
         fun onDataLoaded(storeResponse: SearchResponse)

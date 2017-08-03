@@ -7,16 +7,15 @@
     android:layout_height="match_parent"
     tools:context="com.hyundeee.app.usersearch.view.main.MainActivity">
 
-    <TextView
-        android:id="@+id/message"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:text="@string/search"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+   <com.lsjwzh.widget.recyclerviewpager.RecyclerViewPager
+       android:id="@+id/recyclerView"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:paddingLeft="15dp"
+       android:paddingRight="15dp"
+       app:rvp_triggerOffset="0.1"
+       app:rvp_singlePageFling="true"
+       android:clipToPadding="false"/>
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/navigation"
