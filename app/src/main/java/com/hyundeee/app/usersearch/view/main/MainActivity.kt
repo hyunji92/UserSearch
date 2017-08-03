@@ -15,8 +15,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
 
-
-
 class MainActivity : AppCompatActivity(), MainPresenter.View {
 
     @Inject
