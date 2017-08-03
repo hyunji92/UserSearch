@@ -13,7 +13,7 @@ import com.hyundeee.app.usersearch.view.main.di.DaggerMainUserListComponent
 import com.hyundeee.app.usersearch.view.main.presenter.MainPresenter
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
-import sun.util.locale.provider.LocaleProviderAdapter.getAdapter
+
 
 
 
