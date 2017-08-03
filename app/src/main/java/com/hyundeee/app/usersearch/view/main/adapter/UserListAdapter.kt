@@ -16,7 +16,7 @@ class UserListAdapter(var c: Context) : RecyclerView.Adapter<RecyclerView.ViewHo
     val userList = ArrayList<User>()
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
-        //(holder as? UserListViewHolder)?.bindData(imageList[position])
+        (holder as? UserListViewHolder)?.bindData(userList[position])
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder {
