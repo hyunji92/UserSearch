@@ -12,5 +12,7 @@ interface MainPresenter {
     interface View {
         fun onRefreshListView()
         fun onDataLoaded(storeResponse: SearchResponse)
+        fun searchUser(searchWord: String)
+        fun hideKeyBoard()
     }
 }
