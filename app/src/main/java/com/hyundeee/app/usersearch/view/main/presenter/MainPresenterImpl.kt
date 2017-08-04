@@ -14,7 +14,7 @@ class MainPresenterImpl @Inject constructor(val view: MainPresenter.View, val cl
         client.userListService.getUserList(q, "repositories", "desc")
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ view.onDataLoaded(it) }, {it.printStackTrace() }, { view.onDataComplete() })
+                .subscribe({ view.onDataLoaded(it) }, { view.onDataFailed() }, { view.onDataComplete() })
     }
 
 }

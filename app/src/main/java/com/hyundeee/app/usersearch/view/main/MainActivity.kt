@@ -13,6 +13,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.hyundeee.app.usersearch.R
 import com.hyundeee.app.usersearch.dto.SearchResponse
+import com.hyundeee.app.usersearch.dto.User
 import com.hyundeee.app.usersearch.view.main.adapter.FragmentsAdapter
 import com.hyundeee.app.usersearch.view.main.di.DaggerMainUserListComponent
 import com.hyundeee.app.usersearch.view.main.di.MainUserListModule
@@ -29,12 +30,11 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity(), MainPresenter.View {
     @Inject
     lateinit var presenter: MainPresenter
-    //
     val subject: PublishSubject<String> = PublishSubject.create()
-    //
-//    val items by lazy { ArrayList<User>() }
+
     val adpter: FragmentsAdapter by lazy { FragmentsAdapter(supportFragmentManager) }
 
+    lateinit var likedUsers: ArrayList<User>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -136,16 +136,29 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
     override fun onDataLoaded(storeResponse: SearchResponse) {
 
         Log.d("test", "onDataLoaded ------")
-        (adpter.fragmentCache[0] as MainFragment).userAdapter.items.clear()
-        (adpter.fragmentCache[0] as MainFragment).userAdapter.items.addAll(storeResponse.items)
-        (adpter.fragmentCache[0] as MainFragment).userAdapter.notifyDataSetChanged()
+        val searchListView: UserListAdapter = (adpter.fragmentCache[0] as MainFragment).userAdapter
 
 
+        searchListView.items.clear()
+        searchListView.items.addAll(storeResponse.items)
+        setLikeStatus(searchListView.items)
+        searchListView.notifyDataSetChanged()
 
     }
 
+    fun setLikeStatus(searchList: ArrayList<User> ){
+        for (searchUser in searchList) {
+            for (likedUser in likedUsers) {
+                if (searchUser.login.equals(likedUser.login)) {
+                    searchUser.isLike = true
+                    break
+                }
+            }
+        }
+    }
+
     override fun onDataFailed() {
-        Log.d("test", "onDataFailed ------")
+        Log.d("test", "onDataFailed ------" )
         toast("리스트를 불러오는데 문제가 발생했습니다. 다시 시도해 주세요.")
         (adpter.fragmentCache[0] as MainFragment).userAdapter.items.clear()
         (adpter.fragmentCache[0] as MainFragment).userAdapter.notifyDataSetChanged()
