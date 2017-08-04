@@ -1,36 +1,39 @@
 package com.hyundeee.app.usersearch.view.main
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
+import android.util.Log
 import android.view.Menu
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.hyundeee.app.usersearch.R
 import com.hyundeee.app.usersearch.dto.SearchResponse
-import com.hyundeee.app.usersearch.dto.User
-import com.hyundeee.app.usersearch.view.main.fragment.adpter.FragmentsAdapter
-import com.hyundeee.app.usersearch.view.main.adapter.UserListAdapter
-import com.hyundeee.app.usersearch.view.main.di.MainUserListModule
+import com.hyundeee.app.usersearch.view.main.adapter.FragmentsAdapter
 import com.hyundeee.app.usersearch.view.main.di.DaggerMainUserListComponent
+import com.hyundeee.app.usersearch.view.main.di.MainUserListModule
+import com.hyundeee.app.usersearch.view.main.fragment.MainFragment
+import com.hyundeee.app.usersearch.view.main.fragment.adpter.UserListAdapter
 import com.hyundeee.app.usersearch.view.main.presenter.MainPresenter
 import io.reactivex.subjects.PublishSubject
+
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
 class MainActivity : AppCompatActivity(), MainPresenter.View {
-
     @Inject
     lateinit var presenter: MainPresenter
-
+    //
     val subject: PublishSubject<String> = PublishSubject.create()
-
-    val items by lazy { ArrayList<User>() }
-    val adpter by lazy { FragmentsAdapter(supportFragmentManager) }
+    //
+//    val items by lazy { ArrayList<User>() }
+    val adpter: FragmentsAdapter by lazy { FragmentsAdapter(supportFragmentManager) }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,11 +42,12 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
         setSupportActionBar(toolbar)
 
 
-        subject
-                .subscribe { searchUser(it) }
-                .apply { dispose() }
+        subject.debounce(1000,TimeUnit.MILLISECONDS).subscribe { searchUser(it) }
 
-        DaggerMainUserListComponent.builder().mainUserListModule(MainUserListModule(this)).build().inject(this)
+        DaggerMainUserListComponent.builder()
+                .mainUserListModule(MainUserListModule(this))
+                .build()
+                .inject(this)
 
         initView()
 
@@ -56,16 +60,17 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
         val searchView = menu?.findItem(R.id.search_bar)?.actionView as? SearchView
 
         searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextChange(s: String?): Boolean {
-
+            override fun onQueryTextChange(s: String): Boolean {
+                Log.d("test", "searchView setOnQueryTextListener 1------")
                 //s?.let { subject.onNext(it) }
-                subject.onNext(s as String)
+                subject.onNext(s)
                 return false
             }
 
-            override fun onQueryTextSubmit(query: String?): Boolean {
-
+            override fun onQueryTextSubmit(query: String): Boolean {
+                Log.d("test", "searchView onQueryTextSubmit 2------")
                 //presenter.getUserList(query as String)
+                subject.onNext(query)
                 return false
             }
 
@@ -73,15 +78,17 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
         return super.onCreateOptionsMenu(menu)
     }
 
+    @SuppressLint("ResourceAsColor")
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
             R.id.navigation_search -> {
-
+                recyclerViewPager.scrollToPosition(0)
                 return@OnNavigationItemSelectedListener true
             }
 
             R.id.navigation_like -> {
-
+                Log.d("testtest", " mOnNavigationItemSelectedListener 2------")
+                recyclerViewPager.smoothScrollToPosition(1)
                 return@OnNavigationItemSelectedListener true
             }
         }
@@ -90,43 +97,35 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
 
     fun initView() {
         // RecyclerView setting
-        recyclerView.apply {
+        recyclerViewPager.apply {
             setHasFixedSize(true)
-            val linearLayout = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            layoutManager = linearLayout
-            clearOnScrollListeners()
+            layoutManager = object : LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false) {
+                @Override
+                override fun canScrollHorizontally(): Boolean {
+                    return true
+                }
+            }
+            adapter = adpter
         }
 
-        recyclerView.adapter = adpter
+
 
     }
 
     fun toast(message: String) = Toast.makeText(baseContext, message, Toast.LENGTH_LONG).show()
 
     override fun searchUser(searchWord: String) {
+        Log.d("test", "search User 1------")
         if (searchWord.isNullOrBlank()) {
 
             toast("검색된 이미지가 없습니다")
-            (recyclerView.adapter as UserListAdapter).userList.clear()
-            (recyclerView.adapter as UserListAdapter).notifyDataSetChanged()
+            (adpter.fragmentCache[0] as MainFragment).userAdapter.items.clear()
+            (adpter.fragmentCache[0] as MainFragment).userAdapter.notifyDataSetChanged()
 
         } else {
+            Log.d("test", "search User 2------")
             presenter.getUserList(searchWord)
 
-            /* imageRestClient.client.getImage(apiKey, searchWord)
-                     .subscribeOn(Schedulers.io())
-                     .observeOn(AndroidSchedulers.mainThread())
-                     .subscribe(
-                             */
-
-        }
-    }
-
-    override fun hideKeyBoard() {
-        val view = this.currentFocus
-        if (view != null) {
-            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }
 
@@ -135,27 +134,32 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
     }
 
     override fun onDataLoaded(storeResponse: SearchResponse) {
-         /*subscribe(
-                {
-                    // onNext
-                    (recyclerView.adapter as ImageAdapter).imageList.clear()
-                    (recyclerView.adapter as ImageAdapter).imageList.addAll(it.channel.item)
-                    (recyclerView.adapter as ImageAdapter).notifyDataSetChanged()
 
-                },
-                {
-                    Log.d("Test", "onError $it")
-                    toast("이미지를 불러오는데 문제가 발생했습니다. 다시 시도해 주세요.")
-                    (recyclerView.adapter as ImageAdapter).imageList.clear()
-                    (recyclerView.adapter as ImageAdapter).notifyDataSetChanged()
+        Log.d("test", "onDataLoaded ------")
+        (adpter.fragmentCache[0] as MainFragment).userAdapter.items.clear()
+        (adpter.fragmentCache[0] as MainFragment).userAdapter.items.addAll(storeResponse.items)
+        (adpter.fragmentCache[0] as MainFragment).userAdapter.notifyDataSetChanged()
 
-                },
-                {
-                    //onComplete
-                    hideKeyBoard()
 
-                })*/
+
     }
+
+    override fun onDataFailed() {
+        Log.d("test", "onDataFailed ------")
+        toast("리스트를 불러오는데 문제가 발생했습니다. 다시 시도해 주세요.")
+        (adpter.fragmentCache[0] as MainFragment).userAdapter.items.clear()
+        (adpter.fragmentCache[0] as MainFragment).userAdapter.notifyDataSetChanged()
+    }
+
+    override fun onDataComplete() {
+        Log.d("test", "onDataComplete ------")
+        val view = this.currentFocus
+        if (view != null) {
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
+        }
+    }
+
 }
 
 

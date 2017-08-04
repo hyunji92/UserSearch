@@ -1,5 +1,6 @@
 package com.hyundeee.app.usersearch.view.main.di
 
+import android.content.Context
 import com.hyundeee.app.usersearch.di.module.ClientModule
 import com.hyundeee.app.usersearch.view.main.presenter.MainPresenter
 import com.hyundeee.app.usersearch.view.main.presenter.MainPresenterImpl
@@ -16,8 +17,10 @@ class MainUserListModule(val view: MainPresenter.View) {
     fun provideMainPresenter(presenter: MainPresenterImpl): MainPresenter {
         return presenter
     }
+
     @Provides
     fun provideMainView(): MainPresenter.View {
         return view
     }
+
 }

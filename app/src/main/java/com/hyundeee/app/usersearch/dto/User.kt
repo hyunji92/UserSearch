@@ -16,7 +16,7 @@ data class User (
         val repos_url: String,
         val received_events_url: String,
         val type: String,
-        val score: Long
+        val score: Double
 
 )
 

@@ -1,6 +1,7 @@
 package com.hyundeee.app.usersearch.view.main.di
 
 import com.hyundeee.app.usersearch.view.main.MainActivity
+import com.hyundeee.app.usersearch.view.main.fragment.MainFragment
 import dagger.Component
 
 /**
@@ -8,5 +9,6 @@ import dagger.Component
  */
 @Component(modules = arrayOf(MainUserListModule::class))
 interface MainUserListComponent {
-    fun inject(activity: MainActivity)
+    fun inject(Fragment: MainFragment)
+    fun inject(Activity: MainActivity)
 }

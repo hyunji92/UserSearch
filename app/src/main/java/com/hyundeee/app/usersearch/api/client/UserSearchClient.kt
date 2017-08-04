@@ -15,7 +15,7 @@ import javax.inject.Singleton
 class UserSearchClient @Inject constructor(provideOkHttpClient: OkHttpClient) {
 
     var baseUrl = "https://api.github.com"
-    val githubService: UserSearchService
+    val userListService: UserSearchService
 
     init {
         val retrofit =  Retrofit.Builder()
@@ -25,6 +25,6 @@ class UserSearchClient @Inject constructor(provideOkHttpClient: OkHttpClient) {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
 
-        githubService = retrofit.create(UserSearchService::class.java)
+        userListService = retrofit.create(UserSearchService::class.java)
     }
 }
