@@ -14,21 +14,22 @@ import android.support.v7.widget.RecyclerView
 import android.util.Log
 import com.hyundeee.app.usersearch.R
 import com.hyundeee.app.usersearch.Yame
-import com.hyundeee.app.usersearch.view.main.di.DaggerMainUserListComponent
 import com.hyundeee.app.usersearch.view.main.di.MainUserListModule
 import com.hyundeee.app.usersearch.view.main.fragment.adpter.UserListAdapter
+import com.hyundeee.app.usersearch.view.main.fragment.listener.RecyclerItemClickListener
 import kotlinx.android.synthetic.main.activity_main.*
 
 
 /**
  * Created by jeonghyeonji on 2017. 8. 3..
  */
-class MainFragment : Fragment(), MainPresenter.View {
+class MainFragment : Fragment(){
+
+
+    private var index: Int = 0
 
     @Inject
     lateinit var presenter: MainPresenter
-
-    private var index: Int = 0
 
     val subject: PublishSubject<String> = PublishSubject.create()
     val items by lazy { ArrayList<User>() }
@@ -42,21 +43,31 @@ class MainFragment : Fragment(), MainPresenter.View {
             val linearLayout = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
             layoutManager = linearLayout
             adapter = userAdapter
+            addOnItemTouchListener(RecyclerItemClickListener(activity, rv, object : RecyclerItemClickListener.OnItemClickListener {
+                override fun onItemClick(view: View, position: Int) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+
+                override fun onLongItemClick(view: View, position: Int) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+
+            }))
         }
 
+        //TODO: MainFragement Inject를 뺴도 될것 같다 빼보자.
         DaggerMainUserListComponent.builder()
                 .mainUserListModule(MainUserListModule(this))
                 .build()
                 .inject(this)
 
-
-        if (arguments.get("position") == 1) {
+        /*if (arguments.get("position") == 1) {
             Log.d("WTF", "POSITION : 1 ")
             Yame.subject.subscribe({
                 userAdapter.items.add(it)
                 userAdapter.notifyDataSetChanged()
             })
-        }
+        }*/
 
         return rv
     }
@@ -70,27 +81,5 @@ class MainFragment : Fragment(), MainPresenter.View {
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         super.onCreateOptionsMenu(menu, inflater)
     }
-
-
-    override fun onRefreshListView() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun onDataLoaded(storeResponse: SearchResponse) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun onDataFailed() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun onDataComplete() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun searchUser(searchWord: String) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
 
 }
