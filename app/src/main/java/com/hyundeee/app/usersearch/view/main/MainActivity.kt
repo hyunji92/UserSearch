@@ -6,22 +6,19 @@ import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
-import android.util.Log
 import android.view.Menu
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.hyundeee.app.usersearch.R
 import com.hyundeee.app.usersearch.dto.SearchResponse
 import com.hyundeee.app.usersearch.dto.User
-import com.hyundeee.app.usersearch.view.main.adapter.FragmentsAdapter
+import com.hyundeee.app.usersearch.view.main.fragment.adpter.FragmentsAdapter
+import com.hyundeee.app.usersearch.view.main.adapter.UserListAdapter
 import com.hyundeee.app.usersearch.view.main.di.MainUserListModule
 import com.hyundeee.app.usersearch.view.main.di.DaggerMainUserListComponent
 import com.hyundeee.app.usersearch.view.main.presenter.MainPresenter
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_main.*
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
@@ -61,13 +58,14 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
         searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(s: String?): Boolean {
 
-                presenter.getUserList(s as String)
+                //s?.let { subject.onNext(it) }
+                subject.onNext(s as String)
                 return false
             }
 
             override fun onQueryTextSubmit(query: String?): Boolean {
 
-                presenter.getUserList(query as String)
+                //presenter.getUserList(query as String)
                 return false
             }
 
@@ -91,7 +89,6 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
     }
 
     fun initView() {
-
         // RecyclerView setting
         recyclerView.apply {
             setHasFixedSize(true)
@@ -103,40 +100,24 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
         recyclerView.adapter = adpter
 
     }
+
     fun toast(message: String) = Toast.makeText(baseContext, message, Toast.LENGTH_LONG).show()
 
     override fun searchUser(searchWord: String) {
         if (searchWord.isNullOrBlank()) {
 
             toast("검색된 이미지가 없습니다")
-            (recyclerView.adapter as ImageAdapter).imageList.clear()
-            (recyclerView.adapter as ImageAdapter).notifyDataSetChanged()
+            (recyclerView.adapter as UserListAdapter).userList.clear()
+            (recyclerView.adapter as UserListAdapter).notifyDataSetChanged()
 
         } else {
+            presenter.getUserList(searchWord)
 
-            imageRestClient.client.getImage(apiKey, searchWord)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                            {
-                                // onNext
-                                (recyclerView.adapter as ImageAdapter).imageList.clear()
-                                (recyclerView.adapter as ImageAdapter).imageList.addAll(it.channel.item)
-                                (recyclerView.adapter as ImageAdapter).notifyDataSetChanged()
-
-                            },
-                            {
-                                Log.d("Test", "onError $it")
-                                toast("이미지를 불러오는데 문제가 발생했습니다. 다시 시도해 주세요.")
-                                (recyclerView.adapter as ImageAdapter).imageList.clear()
-                                (recyclerView.adapter as ImageAdapter).notifyDataSetChanged()
-
-                            },
-                            {
-                                //onComplete
-                                hideKeyBoard()
-
-                            })
+            /* imageRestClient.client.getImage(apiKey, searchWord)
+                     .subscribeOn(Schedulers.io())
+                     .observeOn(AndroidSchedulers.mainThread())
+                     .subscribe(
+                             */
 
         }
     }
@@ -154,6 +135,27 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
     }
 
     override fun onDataLoaded(storeResponse: SearchResponse) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+         /*subscribe(
+                {
+                    // onNext
+                    (recyclerView.adapter as ImageAdapter).imageList.clear()
+                    (recyclerView.adapter as ImageAdapter).imageList.addAll(it.channel.item)
+                    (recyclerView.adapter as ImageAdapter).notifyDataSetChanged()
+
+                },
+                {
+                    Log.d("Test", "onError $it")
+                    toast("이미지를 불러오는데 문제가 발생했습니다. 다시 시도해 주세요.")
+                    (recyclerView.adapter as ImageAdapter).imageList.clear()
+                    (recyclerView.adapter as ImageAdapter).notifyDataSetChanged()
+
+                },
+                {
+                    //onComplete
+                    hideKeyBoard()
+
+                })*/
     }
 }
+
+

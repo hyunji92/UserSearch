@@ -1,4 +1,4 @@
-package com.hyundeee.app.usersearch.view.main.adapter
+package com.hyundeee.app.usersearch.view.main.fragment.adpter
 
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
