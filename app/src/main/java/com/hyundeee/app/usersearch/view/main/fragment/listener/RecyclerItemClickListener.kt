@@ -14,7 +14,7 @@ import android.text.method.Touch.onTouchEvent
  */
 open class RecyclerItemClickListener(context: Context, recyclerView: RecyclerView, listener: OnItemClickListener) : RecyclerView.OnItemTouchListener {
 
-    lateinit var listener: OnItemClickListener
+    val listener: OnItemClickListener = listener
 
     interface OnItemClickListener {
         fun onItemClick(view: View, position: Int)
@@ -38,7 +38,7 @@ open class RecyclerItemClickListener(context: Context, recyclerView: RecyclerVie
 
     override fun onInterceptTouchEvent(recyclerView: RecyclerView?, e: MotionEvent?): Boolean {
         val childView = recyclerView?.findChildViewUnder(e?.x as Float, e.y)
-        if (childView != null && listener != null && gestureDetector.onTouchEvent(e)) {
+        if (childView != null && gestureDetector.onTouchEvent(e)) {
             listener.onItemClick(childView, recyclerView.getChildAdapterPosition(childView))
             return true
         }

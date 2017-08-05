@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
         setSupportActionBar(toolbar)
 
 
-        subject.debounce(1000,TimeUnit.MILLISECONDS).subscribe { searchUser(it) }
+        subject.debounce(1000, TimeUnit.MILLISECONDS).subscribe { searchUser(it) }
 
         DaggerMainUserListComponent.builder()
                 .mainUserListModule(MainUserListModule(this))
@@ -109,7 +109,6 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
         }
 
 
-
     }
 
     fun toast(message: String) = Toast.makeText(baseContext, message, Toast.LENGTH_LONG).show()
@@ -121,6 +120,7 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
             toast("검색된 이미지가 없습니다")
             (adpter.fragmentCache[0] as MainFragment).userAdapter.items.clear()
             (adpter.fragmentCache[0] as MainFragment).userAdapter.notifyDataSetChanged()
+
 
         } else {
             Log.d("test", "search User 2------")
@@ -136,17 +136,25 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
     override fun onDataLoaded(storeResponse: SearchResponse) {
 
         Log.d("test", "onDataLoaded ------")
-        val searchListView: UserListAdapter = (adpter.fragmentCache[0] as MainFragment).userAdapter
+//        val searchListView: UserListAdapter = (adpter.fragmentCache[0] as MainFragment).userAdapter
+        //val likeListView: UserListAdapter = (adpter.fragmentCache[1] as MainFragment).userAdapter
+        (adpter.fragmentCache[0] as MainFragment).userAdapter.apply {
+            type = UserListAdapter.Type.SEARCH
+            items.clear()
+            items.addAll(storeResponse.items)
+            notifyDataSetChanged()
+        }
 
 
-        searchListView.items.clear()
-        searchListView.items.addAll(storeResponse.items)
-        setLikeStatus(searchListView.items)
-        searchListView.notifyDataSetChanged()
+//        (adpter.fragmentCache[1] as MainFragment).userAdapter.type = UserListAdapter.Type.LIKE
+//        (adpter.fragmentCache[1] as MainFragment).userAdapter.items.clear()
+//        Log.d("user like list test", "user like test 4  :  " + storeResponse.items.filter { it.isLike }.toList())
+//        (adpter.fragmentCache[1] as MainFragment).userAdapter.items.addAll(storeResponse.items.filter { it.isLike }.toList())
+//        (adpter.fragmentCache[1] as MainFragment).userAdapter.notifyDataSetChanged()
 
     }
 
-    fun setLikeStatus(searchList: ArrayList<User> ){
+    fun setLikeStatus(searchList: ArrayList<User>) {
         for (searchUser in searchList) {
             for (likedUser in likedUsers) {
                 if (searchUser.login.equals(likedUser.login)) {
@@ -158,11 +166,14 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
     }
 
     override fun onDataFailed() {
-        Log.d("test", "onDataFailed ------" )
+        Log.d("test", "onDataFailed ------")
         toast("리스트를 불러오는데 문제가 발생했습니다. 다시 시도해 주세요.")
-        (adpter.fragmentCache[0] as MainFragment).userAdapter.items.clear()
-        (adpter.fragmentCache[0] as MainFragment).userAdapter.notifyDataSetChanged()
+        (adpter.fragmentCache[0] as MainFragment).userAdapter.apply {
+            items.clear()
+            notifyDataSetChanged()
+        }
     }
+
 
     override fun onDataComplete() {
         Log.d("test", "onDataComplete ------")

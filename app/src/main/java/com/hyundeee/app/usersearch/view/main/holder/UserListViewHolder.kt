@@ -1,22 +1,31 @@
 package com.hyundeee.app.usersearch.view.main.holder
 
-import android.support.v7.widget.RecyclerView
-import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
-import com.hyundeee.app.usersearch.R
-import com.hyundeee.app.usersearch.Yame
-import com.hyundeee.app.usersearch.dto.User
-import kotlinx.android.synthetic.main.list_item.*
-
 
 /**
  * Created by jeonghyeonji on 2017. 8. 4..
  */
-class UserListViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-
-    val image: ImageView = view.findViewById(R.id.user_avatar_image)
-    val name: TextView = view.findViewById(R.id.user_name)
-    val repoUrl: TextView = view.findViewById(R.id.user_repo_url)
-
-}
+//class UserListViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+//
+//    var userLikeList = ArrayList<String>()
+//
+//    fun bindView(userListItem: User){
+//
+//        view.user_name.text = userListItem.login
+//        view.user_repo_url.text = userListItem.repos_url
+//        Glide.with(itemView.context)
+//                .load(userListItem.avatar_url)
+//                .fitCenter()
+//                .into(itemView.user_avatar_image)
+//
+//        view.setOnClickListener {
+//            Log.d("user like list test", "user like list position   :  " + adapterPosition)
+//            userListItem.isLike = true
+//            if (userListItem.isLike) {
+//                view.like_button.setBackgroundResource(R.drawable.ic_like_on)
+//                userLikeList.add(userListItem.login)
+//            }
+//        }
+//        Log.d("user like list test", "user like list test   :  " + userLikeList.toString())
+//    }
+//
+//}
