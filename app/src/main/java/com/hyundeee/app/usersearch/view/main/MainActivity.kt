@@ -136,8 +136,6 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
     override fun onDataLoaded(storeResponse: SearchResponse) {
 
         Log.d("test", "onDataLoaded ------")
-//        val searchListView: UserListAdapter = (adpter.fragmentCache[0] as MainFragment).userAdapter
-        //val likeListView: UserListAdapter = (adpter.fragmentCache[1] as MainFragment).userAdapter
         (adpter.fragmentCache[0] as MainFragment).userAdapter.apply {
             type = UserListAdapter.Type.SEARCH
             items.clear()
@@ -145,12 +143,14 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
             notifyDataSetChanged()
         }
 
-
-//        (adpter.fragmentCache[1] as MainFragment).userAdapter.type = UserListAdapter.Type.LIKE
-//        (adpter.fragmentCache[1] as MainFragment).userAdapter.items.clear()
-//        Log.d("user like list test", "user like test 4  :  " + storeResponse.items.filter { it.isLike }.toList())
-//        (adpter.fragmentCache[1] as MainFragment).userAdapter.items.addAll(storeResponse.items.filter { it.isLike }.toList())
-//        (adpter.fragmentCache[1] as MainFragment).userAdapter.notifyDataSetChanged()
+        (adpter.fragmentCache[1] as MainFragment).userAdapter.apply {
+            type = UserListAdapter.Type.LIKE
+            items.clear()
+            //TODO like 된 리스트 ( useradapter에 저장 해놓았음 )를 보여줘야한다.
+            items.addAll(storeResponse.items.filter { it.isLike }.toList())
+            notifyDataSetChanged()
+        }
+        Log.d("user like list test", "user like test 4  :  " + storeResponse.items.filter { it.isLike }.toList())
 
     }
 

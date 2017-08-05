@@ -17,4 +17,6 @@ class MainPresenterImpl @Inject constructor(val view: MainPresenter.View, val cl
                 .subscribe({ view.onDataLoaded(it) }, { view.onDataFailed() }, { view.onDataComplete() })
     }
 
+
+
 }

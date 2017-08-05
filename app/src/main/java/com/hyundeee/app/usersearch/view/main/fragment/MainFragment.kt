@@ -23,7 +23,7 @@ import kotlinx.android.synthetic.main.list_item.view.*
 /**
  * Created by jeonghyeonji on 2017. 8. 3..
  */
-class MainFragment : Fragment(),MainPresenter.View{
+class MainFragment : Fragment(), MainPresenter.View {
 
     private var index: Int = 0
 
@@ -36,17 +36,18 @@ class MainFragment : Fragment(),MainPresenter.View{
 
     val userAdapter by lazy { UserListAdapter(context, items) }
 
-    val clickListener = object: OnItemClickListener{
+    val clickListener = object : OnItemClickListener {
         override fun onItemClick(view: View, position: Int) {
 
             Log.d("user like list test", "user like list position   :  " + position)
             Log.d("user like list test", "user like list state   :  " + userAdapter.items[position].isLike)
             userAdapter.items[position].run {
-                if (!isLike){
+                if (!isLike) {
                     isLike = true
-                    view.like_button.isSelected  = isLike
+                    view.like_button.isSelected = isLike
                     userAdapter.userLikeList = items.filter { it.isLike }.toList()
                     Log.d("user like list test", "user like test 3  :  " + userAdapter.userLikeList.toString())
+
                 }
             }
         }
