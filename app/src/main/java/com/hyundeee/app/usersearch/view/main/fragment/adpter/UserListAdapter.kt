@@ -64,6 +64,10 @@ class UserListAdapter(var c: Context, val items: ArrayList<User>) : RecyclerView
 
         fun bindView(userListItem: User) {
 
+
+            with(view){
+                user_name.text = userListItem.login
+            }
             view.user_name.text = userListItem.login
             view.user_repo_url.text = userListItem.repos_url
             Glide.with(itemView.context)

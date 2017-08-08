@@ -12,6 +12,7 @@ import javax.inject.Inject
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import com.hyundeee.app.usersearch.R
+import com.hyundeee.app.usersearch.YameTest
 import com.hyundeee.app.usersearch.view.main.adapter.FragmentsAdapter
 import com.hyundeee.app.usersearch.view.main.di.DaggerMainUserListComponent
 import com.hyundeee.app.usersearch.view.main.di.MainUserListModule
@@ -37,6 +38,7 @@ class MainFragment : Fragment(), MainPresenter.View {
     val userAdapter by lazy { UserListAdapter(context, items) }
 
     val clickListener = object : OnItemClickListener {
+
         override fun onItemClick(view: View, position: Int) {
 
             Log.d("user like list test", "user like list position   :  " + position)
@@ -47,8 +49,8 @@ class MainFragment : Fragment(), MainPresenter.View {
                     view.like_button.isSelected = isLike
                     userAdapter.userLikeList = items.filter { it.isLike }.toList()
                     Log.d("user like list test", "user like test 3  :  " + userAdapter.userLikeList.toString())
-
                 }
+                YameTest.testSubject.onNext(userAdapter.userLikeList)
             }
         }
     }
@@ -79,10 +81,6 @@ class MainFragment : Fragment(), MainPresenter.View {
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onRefreshListView() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onDataLoaded(storeResponse: SearchResponse) {
