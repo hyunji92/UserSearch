@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
 import android.util.Log
 import android.view.Menu
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.hyundeee.app.usersearch.R
@@ -43,7 +44,7 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
         setSupportActionBar(toolbar)
 
 
-        subject.debounce(1000, TimeUnit.MILLISECONDS).subscribe { searchUser(it) }
+        subject.debounce(2000, TimeUnit.MILLISECONDS).subscribe { searchUser(it) }
 
         DaggerMainUserListComponent.builder()
                 .mainUserListModule(MainUserListModule(this))
@@ -67,6 +68,7 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
             }
 
             override fun onQueryTextSubmit(query: String): Boolean {
+                progressbar.visibility = View.VISIBLE
                 subject.onNext(query)
                 return false
             }
@@ -103,8 +105,6 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
             }
             adapter = adpter
         }
-
-
     }
 
     fun toast(message: String) = Toast.makeText(baseContext, message, Toast.LENGTH_LONG).show()
@@ -124,6 +124,7 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
 
 
     override fun onDataLoaded(storeResponse: SearchResponse) {
+
 
         Log.d("test", "onDataLoaded ------")
         (adpter.fragmentCache[0] as MainFragment).userAdapter.apply {
@@ -165,6 +166,7 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
 
 
     override fun onDataComplete() {
+        progressbar.visibility = View.GONE
         Log.d("test", "onDataComplete ------")
         val view = this.currentFocus
         if (view != null) {
