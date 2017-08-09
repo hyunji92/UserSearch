@@ -9,6 +9,6 @@ import dagger.Component
  */
 @Component(modules = arrayOf(MainUserListModule::class))
 interface MainUserListComponent {
-    fun inject(Fragment: MainFragment)
+    //fun inject(Fragment: MainFragment)
     fun inject(Activity: MainActivity)
 }

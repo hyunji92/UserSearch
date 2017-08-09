@@ -77,6 +77,5 @@ class UserListAdapter(var c: Context, val items: ArrayList<User>) : RecyclerView
 
             view.setOnClickListener { view -> onItemClickListener.onItemClick(view, adapterPosition) }
         }
-
     }
 }

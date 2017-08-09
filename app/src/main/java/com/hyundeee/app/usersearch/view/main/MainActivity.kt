@@ -62,15 +62,11 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
 
         searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(s: String): Boolean {
-                Log.d("test", "searchView setOnQueryTextListener 1------")
-                //s?.let { testSubject.onNext(it) }
                 subject.onNext(s)
                 return false
             }
 
             override fun onQueryTextSubmit(query: String): Boolean {
-                Log.d("test", "searchView onQueryTextSubmit 2------")
-                //presenter.getUserList(query as String)
                 subject.onNext(query)
                 return false
             }
@@ -88,7 +84,6 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
             }
 
             R.id.navigation_like -> {
-                Log.d("testtest", " mOnNavigationItemSelectedListener 2------")
                 recyclerViewPager.smoothScrollToPosition(1)
                 return@OnNavigationItemSelectedListener true
             }
@@ -115,28 +110,23 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
     fun toast(message: String) = Toast.makeText(baseContext, message, Toast.LENGTH_LONG).show()
 
     override fun searchUser(searchWord: String) {
-        Log.d("test", "search User 1------")
         if (searchWord.isNullOrBlank()) {
-
             toast("검색된 이미지가 없습니다")
-            (adpter.fragmentCache[0] as MainFragment).userAdapter.items.clear()
-            (adpter.fragmentCache[0] as MainFragment).userAdapter.notifyDataSetChanged()
-
-
+            (adpter.fragmentCache[0] as MainFragment).apply {
+                userAdapter.items.clear()
+                userAdapter.notifyDataSetChanged()
+            }
         } else {
-            Log.d("test", "search User 2------")
             presenter.getUserList(searchWord)
 
         }
     }
 
 
-
     override fun onDataLoaded(storeResponse: SearchResponse) {
 
         Log.d("test", "onDataLoaded ------")
         (adpter.fragmentCache[0] as MainFragment).userAdapter.apply {
-            //type = UserListAdapter.Type.SEARCH
             items.clear()
             items.addAll(storeResponse.items)
             notifyDataSetChanged()
@@ -145,9 +135,7 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
         YameTest.testSubject.subscribe({
             Log.d("onNext", "onDataLoaded ------ :::" + it)
             (adpter.fragmentCache[1] as MainFragment).userAdapter.apply {
-                //type = UserListAdapter.Type.LIKE
                 items.clear()
-                //TODO like 된 리스트 ( useradapter에 저장 해놓았음 )를 보여줘야한다.
                 items.addAll(it)
                 notifyDataSetChanged()
             }
