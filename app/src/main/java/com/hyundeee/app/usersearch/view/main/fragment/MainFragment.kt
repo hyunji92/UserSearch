@@ -31,9 +31,9 @@ class MainFragment : Fragment() {
                     isLike = true
                     view.like_button.isSelected = isLike
                     userAdapter.userLikeList = items.filter { it.isLike }.toList()
+                    YameTest.testSubject.onNext(userAdapter.userLikeList)
                     Log.d("user like list test", "user like test 3  :  " + userAdapter.userLikeList.toString())
                 }
-                YameTest.testSubject.onNext(userAdapter.userLikeList)
             }
         }
     }
