@@ -9,9 +9,11 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
 import android.util.Log
 import android.view.Menu
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.hyundeee.app.usersearch.R
+import com.hyundeee.app.usersearch.YameTest
 import com.hyundeee.app.usersearch.dto.SearchResponse
 import com.hyundeee.app.usersearch.dto.User
 import com.hyundeee.app.usersearch.view.main.adapter.FragmentsAdapter
@@ -42,7 +44,7 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
         setSupportActionBar(toolbar)
 
 
-        subject.debounce(1000, TimeUnit.MILLISECONDS).subscribe { searchUser(it) }
+        subject.debounce(2000, TimeUnit.MILLISECONDS).subscribe { searchUser(it) }
 
         DaggerMainUserListComponent.builder()
                 .mainUserListModule(MainUserListModule(this))
@@ -61,15 +63,12 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
 
         searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(s: String): Boolean {
-                Log.d("test", "searchView setOnQueryTextListener 1------")
-                //s?.let { subject.onNext(it) }
                 subject.onNext(s)
                 return false
             }
 
             override fun onQueryTextSubmit(query: String): Boolean {
-                Log.d("test", "searchView onQueryTextSubmit 2------")
-                //presenter.getUserList(query as String)
+                progressbar.visibility = View.VISIBLE
                 subject.onNext(query)
                 return false
             }
@@ -87,7 +86,6 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
             }
 
             R.id.navigation_like -> {
-                Log.d("testtest", " mOnNavigationItemSelectedListener 2------")
                 recyclerViewPager.smoothScrollToPosition(1)
                 return@OnNavigationItemSelectedListener true
             }
@@ -107,50 +105,42 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
             }
             adapter = adpter
         }
-
-
     }
 
     fun toast(message: String) = Toast.makeText(baseContext, message, Toast.LENGTH_LONG).show()
 
     override fun searchUser(searchWord: String) {
-        Log.d("test", "search User 1------")
         if (searchWord.isNullOrBlank()) {
-
             toast("검색된 이미지가 없습니다")
-            (adpter.fragmentCache[0] as MainFragment).userAdapter.items.clear()
-            (adpter.fragmentCache[0] as MainFragment).userAdapter.notifyDataSetChanged()
-
-
+            (adpter.fragmentCache[0] as MainFragment).apply {
+                userAdapter.items.clear()
+                userAdapter.notifyDataSetChanged()
+            }
         } else {
-            Log.d("test", "search User 2------")
             presenter.getUserList(searchWord)
 
         }
     }
 
-    override fun onRefreshListView() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
 
     override fun onDataLoaded(storeResponse: SearchResponse) {
 
+
         Log.d("test", "onDataLoaded ------")
         (adpter.fragmentCache[0] as MainFragment).userAdapter.apply {
-            type = UserListAdapter.Type.SEARCH
             items.clear()
             items.addAll(storeResponse.items)
             notifyDataSetChanged()
         }
 
-        (adpter.fragmentCache[1] as MainFragment).userAdapter.apply {
-            type = UserListAdapter.Type.LIKE
-            items.clear()
-            //TODO like 된 리스트 ( useradapter에 저장 해놓았음 )를 보여줘야한다.
-            items.addAll(storeResponse.items.filter { it.isLike }.toList())
-            notifyDataSetChanged()
-        }
-        Log.d("user like list test", "user like test 4  :  " + storeResponse.items.filter { it.isLike }.toList())
+        YameTest.testSubject.subscribe({
+            Log.d("onNext", "onDataLoaded ------ :::" + it)
+            (adpter.fragmentCache[1] as MainFragment).userAdapter.apply {
+                items.clear()
+                items.addAll(it)
+                notifyDataSetChanged()
+            }
+        })
 
     }
 
@@ -176,6 +166,7 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
 
 
     override fun onDataComplete() {
+        progressbar.visibility = View.GONE
         Log.d("test", "onDataComplete ------")
         val view = this.currentFocus
         if (view != null) {
